@@ -1,11 +1,9 @@
 package no.ntnu.tomme87.imt3673.lab2_1;
 
-
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -24,12 +22,13 @@ import android.widget.Toast;
 import java.util.List;
 
 public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
-    private static final int JOB_ID = 1001;
     private final String TAG = "ItemsActivity";
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private ItemListAdapter itemListAdapter;
+
+    private ServiceDoneReceiver serviceDoneReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +37,7 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
 
         setupUI();
         setupData();
+        setupReceiver();
         Utils.setupScheduler(this);
     }
 
@@ -63,6 +63,7 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
     @Override
     protected void onDestroy() {
         ItemDatabase.destroyInstance();
+        unregisterReceiver(this.serviceDoneReceiver);
         super.onDestroy();
     }
 
@@ -89,17 +90,27 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
         new ItemsFromDatabaseTask(ItemDatabase.getDatabase(this)).execute();
     }
 
+    private void setupReceiver() {
+        this.serviceDoneReceiver = new ServiceDoneReceiver();
+        registerReceiver(this.serviceDoneReceiver, new IntentFilter(ServiceDoneReceiver.ACTION));
+    }
+
+    /**
+     * Run when user swipes down from the top of view.
+     * 
+     * Consider actually invoking the service somehow here. this just get's data from DB.
+     */
     @Override
     public void onRefresh() {
         new ItemsFromDatabaseTask(ItemDatabase.getDatabase(this)).execute();
     }
 
-    class RecyclerTouchListener extends RecyclerView.SimpleOnItemTouchListener {
+    private class RecyclerTouchListener extends RecyclerView.SimpleOnItemTouchListener {
         private final String TAG = "RecyclerTouchListener";
         private GestureDetector gestureDetector;
 
         RecyclerTouchListener(Context context) {
-            this.gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
+            this.gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
                     return true;
@@ -121,7 +132,8 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
         }
     }
 
-    class ItemsFromDatabaseTask extends AsyncTask<Void, Void, List<ItemEntity>> {
+    // Consider using static class: https://stackoverflow.com/a/46166223 ??
+    private class ItemsFromDatabaseTask extends AsyncTask<Void, Void, List<ItemEntity>> {
         private ItemDatabase db;
 
         ItemsFromDatabaseTask(ItemDatabase db) {
@@ -143,7 +155,7 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
             if (itemEntities != null && itemEntities.size() > 0) {
                 itemListAdapter.setData(itemEntities);
             } else {
-                Toast.makeText(getApplicationContext(), "Nothing in database", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Nothing in database, make sure settings are correct", Toast.LENGTH_LONG).show();
             }
             swipeRefreshLayout.setRefreshing(false);
         }
@@ -151,6 +163,15 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
         @Override
         protected void onCancelled() {
             swipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    class ServiceDoneReceiver extends BroadcastReceiver {
+        static final String ACTION = "no.ntnu.tomme87.imt3673.lab2_1.ServiceDoneReceiver";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setupData();
         }
     }
 }

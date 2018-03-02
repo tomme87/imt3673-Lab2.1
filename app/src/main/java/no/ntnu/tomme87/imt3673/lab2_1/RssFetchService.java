@@ -2,6 +2,7 @@ package no.ntnu.tomme87.imt3673.lab2_1;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -55,8 +56,8 @@ public class RssFetchService extends JobService {
 
         RssFetchStoreTask(ItemDatabase db, final JobParameters params) {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(RssFetchService.this);
-            url = sharedPreferences.getString(SettingsFragment.RSS_URL, null);
-            maxItems = Integer.parseInt(sharedPreferences.getString(SettingsFragment.MAX_ITEMS, getString(R.string.list_result_default)));
+            this.url = sharedPreferences.getString(SettingsFragment.RSS_URL, null);
+            this.maxItems = Integer.parseInt(sharedPreferences.getString(SettingsFragment.MAX_ITEMS, getString(R.string.list_result_default)));
 
             this.db = db;
             this.params = params;
@@ -65,17 +66,17 @@ public class RssFetchService extends JobService {
         @Override
         protected List<ItemEntity> doInBackground(Void... params) {
             try {
-                db.itemDao().deleteAll();
+                this.db.itemDao().deleteAll();
 
-                if (url == null) {
+                if (this.url == null) {
                     Log.d(TAG, "Url is null");
                     return null;
                 }
 
-                Log.d(TAG, "Max items: " + maxItems);
+                Log.d(TAG, "Max items: " + this.maxItems);
 
-                InputStream inputStream = new URL(url).openConnection().getInputStream();
-                Feed feed = EarlParser.parseOrThrow(inputStream, maxItems);
+                InputStream inputStream = new URL(this.url).openConnection().getInputStream();
+                Feed feed = EarlParser.parseOrThrow(inputStream, this.maxItems);
 
                 List<ItemEntity> items = new ArrayList<>();
                 for (Item item : feed.getItems()) {
@@ -84,7 +85,7 @@ public class RssFetchService extends JobService {
 
                 Log.d(TAG, "num items: " + items.size());
 
-                db.itemDao().insert(items);
+                this.db.itemDao().insert(items);
 
                 return items;
 
@@ -101,6 +102,7 @@ public class RssFetchService extends JobService {
         @Override
         protected void onPostExecute(List<ItemEntity> itemEntities) {
             Log.d(TAG, "Job finish");
+            sendBroadcast(new Intent(ItemsActivity.ServiceDoneReceiver.ACTION));
             ItemDatabase.destroyInstance();
             jobFinished(this.params, itemEntities == null);
         }
