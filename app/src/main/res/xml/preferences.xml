@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="pref_settings"
+        android:title="Settings">
+        <EditTextPreference
+            android:inputType="textUri"
+            android:key="pref_rss_url"
+            android:summary="URL to RSS2.0 or Atom feed"
+            android:title="RSS Feed" />
+        <ListPreference
+            android:defaultValue="@string/list_result_default"
+            android:dialogTitle="num items"
+            android:entries="@array/list_result_limits"
+            android:entryValues="@array/list_result_limits"
+            android:key="pref_list_num"
+            android:summary="how many items to show in the view"
+            android:title="Number of items" />
+        <ListPreference
+            android:defaultValue="@string/list_result_frequency_default"
+            android:dialogTitle="num items"
+            android:entries="@array/list_result_frequency"
+            android:entryValues="@array/list_result_frequency_values"
+            android:key="pref_list_freq"
+            android:summary=" frequency at which the app fetches the content"
+            android:title="Frequency" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

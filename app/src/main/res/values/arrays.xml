@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="list_result_limits">
+        <item>10</item>
+        <item>20</item>
+        <item>50</item>
+        <item>100</item>
+    </string-array>
+
+    <string-array name="list_result_frequency">
+        <item>15 minutes</item>
+        <item>60 minutes</item>
+        <item>Once a day</item>
+    </string-array>
+    <string-array name="list_result_frequency_values">
+        <item>15</item>
+        <item>60</item>
+        <item>1440</item>
+    </string-array>
+</resources>
