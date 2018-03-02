@@ -28,7 +28,7 @@ public abstract class ItemDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    public static void destroyInstance() {
+    static void destroyInstance() {
         if (INSTANCE != null) {
             INSTANCE.close();
             INSTANCE = null;

@@ -12,21 +12,17 @@ import android.util.Log;
  * Created by Tomme on 02.03.2018.
  */
 
-public class Utils {
+class Utils {
     private static final String TAG = "Utils";
     private static final int JOB_ID = 1001;
 
     private Utils() {}
 
-    public static void setupScheduler(Context context) {
+    static void setupScheduler(Context context) {
 
         // Get frequency from preferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String frequencyString = sharedPreferences.getString(SettingsFragment.FREQUENCY, context.getString(R.string.list_result_frequency_default));
-        if (frequencyString == null) {
-            Log.d(TAG, "Job scheduling failed: frequency null");
-            return;
-        }
 
         long frequency = Long.parseLong(frequencyString) * 60000L; // 60k in 1 minute
 
