@@ -97,7 +97,7 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
 
     /**
      * Run when user swipes down from the top of view.
-     * 
+     *
      * Consider actually invoking the service somehow here. this just get's data from DB.
      */
     @Override
