@@ -8,8 +8,9 @@ import com.einmalfel.earl.Item;
 
 /**
  * Created by Tomme on 02.03.2018.
+ *
+ * DB entity that holds data from rss item
  */
-
 @Entity
 public class ItemEntity {
     @PrimaryKey(autoGenerate = true)

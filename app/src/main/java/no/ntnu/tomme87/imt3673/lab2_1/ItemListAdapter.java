@@ -14,8 +14,9 @@ import java.util.List;
 
 /**
  * Created by Tomme on 01.03.2018.
+ *
+ * The adapter used in my recyclerview that holds my data (RSS items)
  */
-
 public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemListViewHolder> {
     private final String TAG = "ItemListAdapter";
 
@@ -39,7 +40,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ItemLi
 
     public void onClick(int position) {
         ItemEntity item = data.get(position);
-        Log.d(TAG, "got item: " + item.getTitle());
+        Log.d(TAG, "got item: " + item.getTitle() + " -> " + item.getLink());
 
         Intent intent = new Intent(this.context, ItemDetailsActivity.class);
         intent.putExtra(REQUEST_URL, item.getLink());

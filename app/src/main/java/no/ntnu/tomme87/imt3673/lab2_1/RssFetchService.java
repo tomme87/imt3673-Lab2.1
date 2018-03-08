@@ -23,8 +23,10 @@ import java.util.zip.DataFormatException;
 
 /**
  * Created by Tomme on 01.03.2018.
+ *
+ * This class is a service that starts at given interval.
+ * it fetches RSS from url and saves it to database.
  */
-
 public class RssFetchService extends JobService {
     private static final String TAG = "RssFetchService";
 
@@ -47,6 +49,9 @@ public class RssFetchService extends JobService {
         return true;
     }
 
+    /**
+     * Async task to fetch RSS from url and store in databse.
+     */
     class RssFetchStoreTask extends AsyncTask<Void, Void, List<ItemEntity>> {
 
         private String url;
@@ -99,6 +104,11 @@ public class RssFetchService extends JobService {
             return null;
         }
 
+        /**
+         * Send a broadast when we are done.
+         *
+         * @param itemEntities
+         */
         @Override
         protected void onPostExecute(List<ItemEntity> itemEntities) {
             Log.d(TAG, "Job finish");

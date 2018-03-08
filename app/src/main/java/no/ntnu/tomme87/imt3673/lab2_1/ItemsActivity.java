@@ -38,15 +38,27 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
         setupUI();
         setupData();
         setupReceiver();
-        Utils.setupScheduler(this);
+        //Utils.setupScheduler(this);
     }
 
+    /**
+     * Add action meny when creating options meny
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.actions, menu);
         return true;
     }
 
+    /**
+     * Run settings activity when we click settings i options menu.
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -60,6 +72,9 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Remove db instance and reciever when destroyed
+     */
     @Override
     protected void onDestroy() {
         ItemDatabase.destroyInstance();
@@ -68,22 +83,24 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
     }
 
     private void setupUI() {
+        // Setup laylout
         this.swipeRefreshLayout = findViewById(R.id.l_swiperefresh);
         this.swipeRefreshLayout.setOnRefreshListener(this);
 
         this.recyclerView = findViewById(R.id.rv_items);
 
+        // Setup adapter
         this.itemListAdapter = new ItemListAdapter(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        // Divider between elements: https://stackoverflow.com/a/27037230
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 layoutManager.getOrientation());
 
+        // Setup view
         this.recyclerView.setAdapter(itemListAdapter);
         this.recyclerView.addItemDecoration(dividerItemDecoration);
         this.recyclerView.setLayoutManager(layoutManager);
         this.recyclerView.addOnItemTouchListener(new RecyclerTouchListener(this));
-
-
     }
 
     private void setupData() {
@@ -105,6 +122,9 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
         new ItemsFromDatabaseTask(ItemDatabase.getDatabase(this)).execute();
     }
 
+    /**
+     * Class for handling touch events on the recycler view.
+     */
     private class RecyclerTouchListener extends RecyclerView.SimpleOnItemTouchListener {
         private final String TAG = "RecyclerTouchListener";
         private GestureDetector gestureDetector;
@@ -133,6 +153,10 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
     }
 
     // Consider using static class: https://stackoverflow.com/a/46166223 ??
+
+    /**
+     * Aync task for fetching data from databse
+     */
     private class ItemsFromDatabaseTask extends AsyncTask<Void, Void, List<ItemEntity>> {
         private ItemDatabase db;
 
@@ -166,6 +190,9 @@ public class ItemsActivity extends AppCompatActivity implements SwipeRefreshLayo
         }
     }
 
+    /**
+     * Update view(adapter) with new data when service is done.
+     */
     class ServiceDoneReceiver extends BroadcastReceiver {
         static final String ACTION = "no.ntnu.tomme87.imt3673.lab2_1.ServiceDoneReceiver";
 

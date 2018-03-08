@@ -8,8 +8,9 @@ import android.webkit.WebViewClient;
 
 /**
  * Created by Tomme on 01.03.2018.
+ *
+ * WebView to show URL or description
  */
-
 public class ItemDetailsActivity extends AppCompatActivity {
 
     @Override

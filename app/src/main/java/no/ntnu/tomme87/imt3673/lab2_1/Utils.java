@@ -18,6 +18,11 @@ class Utils {
 
     private Utils() {}
 
+    /**
+     * Sets up a scheduler that run the RssFetchService periodically at a given interval.
+     *
+     * @param context
+     */
     static void setupScheduler(Context context) {
 
         // Get frequency from preferences
